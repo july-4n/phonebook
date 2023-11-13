@@ -91,8 +91,8 @@ const svgEdit = `
     thead.insertAdjacentHTML('beforeend', `
       <tr>
         <th class='delete'>Удалить</th>
-        <th>Имя</th>
-        <th>Фамилия</th>
+        <th class= 'cell-name'>Имя</th>
+        <th class= 'cell-surname'>Фамилия</th>
         <th>Телефон</th>
       </tr>
     `);
@@ -190,6 +190,7 @@ const svgEdit = `
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.btns[0],
+      btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
     };
@@ -197,6 +198,7 @@ const svgEdit = `
 
   const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
+    tr.classList.add('contact');
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -205,9 +207,11 @@ const svgEdit = `
     tdDel.append(buttonDel);
 
     const tdName = document.createElement('td');
+    tdName.classList.add('name');
     tdName.textContent = firstName;
 
     const tdSurname = document.createElement('td');
+    tdSurname.classList.add('surname');
     tdSurname.textContent = surname;
 
     const tdPhone = document.createElement('td');
@@ -250,7 +254,13 @@ const svgEdit = `
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
 
-    const {list, logo, btnAdd, formOverlay, form} = phoneBook;
+    const {
+      list,
+      logo,
+      btnAdd,
+      formOverlay,
+      btnDel,
+    } = phoneBook;
 
     const allRow = renderContacts(list, data);
 
@@ -260,12 +270,50 @@ const svgEdit = `
       formOverlay.classList.add('is-visible');
     });
 
-    form.addEventListener('click', (evt) => {
-      evt.stopPropagation();
+    formOverlay.addEventListener('click', (evt) => {
+      const target = evt.target;
+      if (target === formOverlay || target.classList.contains('close')) {
+        formOverlay.classList.remove('is-visible');
+      }
     });
 
-    formOverlay.addEventListener('click', () => {
-      formOverlay.classList.remove('is-visible');
+    btnDel.addEventListener('click', () => {
+      document.querySelectorAll('.delete').forEach(el => {
+        el.classList.toggle('is-visible');
+      });
+    });
+
+    list.addEventListener('click', evt => {
+      const target = evt.target;
+      if (target.closest('.del-icon')) {
+        target.closest('.contact').remove();
+      }
+    });
+
+    const table = document.querySelector('.table');
+    const tableBody = table.querySelector('tbody');
+
+    const sortTable = (columnIndex) => {
+      const rows = Array.from(document.querySelectorAll('.contact'));
+
+      const sortedRows = rows.sort((a, b) => {
+        const aValue = a.cells[columnIndex].textContent;
+        const bValue = b.cells[columnIndex].textContent;
+
+        return aValue.localeCompare(bValue);
+      });
+
+      tableBody.textContent = '';
+      tableBody.append(...sortedRows);
+    };
+
+    table.addEventListener('click', (evt) => {
+      if (evt.target.tagName === 'TH') {
+        // eslint-disable-next-line max-len
+        const columnIndex = Array.from(evt.target.parentNode.cells).indexOf(evt.target);
+
+        sortTable(columnIndex);
+      }
     });
   };
 

@@ -133,7 +133,7 @@ const svgEdit = `
 
     const buttonGroup = createButtonsGroup([
       {
-        className: 'btn btn-primary mr-3',
+        className: 'btn btn-primary mr-3 js-add',
         type: 'submit',
         text: 'Добавить',
       },
@@ -182,6 +182,7 @@ const svgEdit = `
     const form = createForm();
 
     header.headerContainer.append(logo);
+    // eslint-disable-next-line max-len
     main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
     app.append(header, main, footer);
 
@@ -190,6 +191,7 @@ const svgEdit = `
       logo,
       btnAdd: buttonGroup.btns[0],
       formOverlay: form.overlay,
+      form: form.form,
     };
   };
 
@@ -248,29 +250,23 @@ const svgEdit = `
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
 
-    const {list, logo, btnAdd, formOverlay} = phoneBook;
+    const {list, logo, btnAdd, formOverlay, form} = phoneBook;
 
     const allRow = renderContacts(list, data);
 
     hoverRow(allRow, logo);
 
-    const objEvent = {
-      handleEvent(event) {
-        if (event.ctrlKey) {
-          this.bar();
-        } else {
-          this.foo();
-        }
-      },
-      bar() {
-        document.body.style.backgroundColor = 'black';
-      },
-      foo() {
-        formOverlay.classList.add('is-visible');
-      },
-    };
+    btnAdd.addEventListener('click', () => {
+      formOverlay.classList.add('is-visible');
+    });
 
-    btnAdd.addEventListener('click', objEvent);
+    form.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+    });
+
+    formOverlay.addEventListener('click', () => {
+      formOverlay.classList.remove('is-visible');
+    });
   };
 
   window.phoneBookInit = init;

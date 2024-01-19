@@ -1,6 +1,12 @@
-import * as controls from './modules/control.js';
-import {renderPhoneBook, renderContacts} from './modules/render.js';
-import {getStorage, setStorage} from './modules/serviceStorage.js';
+import * as controls from './js/control.js';
+import {renderPhoneBook, renderContacts} from './js/render.js';
+import {getStorage, setStorage} from './js/serviceStorage.js';
+
+// import './css/normalize.min.css';
+// import './css/bootstrap.min.css';
+// import './css/style.css';
+
+import './scss/index.scss';
 
 {
   const init = (selectorApp, title) => {
@@ -54,5 +60,5 @@ import {getStorage, setStorage} from './modules/serviceStorage.js';
     const sortCol = getStorage('sortedCol');
     sortTable(sortCol);
   };
-  window.phoneBookInit = init;
+  init('#app', 'Юля');
 }
